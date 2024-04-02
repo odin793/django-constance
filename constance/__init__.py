@@ -2,7 +2,6 @@ import time
 from typing import Any
 
 from django.utils.functional import LazyObject
-from settings import USE_MEMORY_CACHE, MEMORY_CACHE_KEY_TIMEOUT_SECONDS
 
 __version__ = '3.1.0'
 
@@ -10,7 +9,11 @@ __version__ = '3.1.0'
 class LazyConfig(LazyObject):
     def _setup(self):
         from .base import Config
-        self._wrapped = Config()
+        from .settings import USE_MEMORY_CACHE, MEMORY_CACHE_KEY_TIMEOUT_SECONDS
+        if USE_MEMORY_CACHE:
+            self._wrapped = ConstanceWithInMemoryCache(Config(), timeout_seconds=MEMORY_CACHE_KEY_TIMEOUT_SECONDS)
+        else:
+            self._wrapped = Config()
 
 
 class ConstanceWithInMemoryCache:
@@ -57,9 +60,3 @@ class ConstanceWithInMemoryCache:
             setattr(self._original_config, attr, value)
             # invalidate cache due to new value of the attribute
             self._cache.pop(attr, None)
-
-
-if USE_MEMORY_CACHE:
-    config = ConstanceWithInMemoryCache(LazyConfig(), timeout_seconds=MEMORY_CACHE_KEY_TIMEOUT_SECONDS)
-else:
-    config = ConstanceWithInMemoryCache(LazyConfig())
