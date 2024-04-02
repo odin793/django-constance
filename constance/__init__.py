@@ -60,3 +60,6 @@ class ConstanceWithInMemoryCache:
             setattr(self._original_config, attr, value)
             # invalidate cache due to new value of the attribute
             self._cache.pop(attr, None)
+
+
+config = LazyConfig()
