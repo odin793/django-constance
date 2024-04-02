@@ -8,6 +8,9 @@ BACKEND = getattr(
     'constance.backends.redisd.RedisBackend'
 )
 
+USE_MEMORY_CACHE = getattr(settings, 'CONSTANCE_USE_MEMORY_CACHE', False)
+MEMORY_CACHE_KEY_TIMEOUT_SECONDS = getattr(settings, 'CONSTANCE_MEMORY_CACHE_KEY_TIMEOUT_SECONDS', 30)
+
 CONFIG = getattr(settings, 'CONSTANCE_CONFIG', {})
 
 CONFIG_FIELDSETS = getattr(settings, 'CONSTANCE_CONFIG_FIELDSETS', {})
